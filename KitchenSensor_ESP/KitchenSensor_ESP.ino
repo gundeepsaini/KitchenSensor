@@ -125,6 +125,7 @@ void loop()
     Fast_Loop();
   }
 
+/*
   // Mid1 Loop
  if(!OTA_Mode && ((millis()/1000 - lastrun_Mid1 > looptime_Mid1) || lastrun_Mid1 ==0))
   {
@@ -132,13 +133,14 @@ void loop()
     Mid1_Loop();
   }
 
+
   // Mid2 Loop
  if(!OTA_Mode && ((millis()/1000 - lastrun_Mid2 > looptime_Mid2) || lastrun_Mid2 ==0))
   {
     lastrun_Mid2 = millis()/1000;
     Mid2_Loop();
   }
-
+*/
   // Slow Loop
  if(!OTA_Mode && ((millis()/1000 - lastrun_slow > looptime_Slow) || lastrun_slow ==0))
   {

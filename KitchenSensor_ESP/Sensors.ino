@@ -25,17 +25,49 @@ void Check_MotionState()
     {
       MQTT_publish_PIR(Motion_State);
       int a = 11111;
-      Send_data_SPI(11, a);       // send msg "On"
+      //Send_data_SPI(11, a);       // send msg "On"
     }
 }
 
 
+unsigned long buttonPress_timestamp=0;
 
 void Handle_ButtonPress()
-{
-   Serial.println("button pressed");
-   sp_mins = 5;
-   TMR_start_time = millis()/1000; 
+{ 
+  if(sp_mins == 0)
+      {
+        buttonPress_timestamp = millis()/1000;
+        TMR_start_time = buttonPress_timestamp;
+      }
+  
+  if(millis()/1000 - buttonPress_timestamp > 20 )   // time before which tmr change is allowed
+    {
+      sp_mins = 0;
+      Send_data_SPI(5, 0, 0);
+    }
+  else
+  {
+    switch(sp_mins)
+    {
+      case 0:
+          sp_mins = 5;
+          break;
+
+      case 5:
+          sp_mins = 10;
+          break;
+
+      case 10:
+          sp_mins = 20;
+          break;
+
+      case 20:
+          sp_mins = 30;
+          break;
+    }  
+  }
+
+  Serial.println(sp_mins);
 }
 
 
@@ -45,16 +77,41 @@ void Handle_Timer()
   if(sp_mins > 0)
   { 
     long TMR_elapsed = millis()/1000 - TMR_start_time;
-    //long TMR_left    = (sp_mins*60) - TMR_elapsed;
+    int sp_secs = sp_mins * 60;
 
-    TMR_mins_left = ((sp_mins*60) - TMR_elapsed) % 60;
-    TMR_secs_left = TMR_elapsed - (TMR_mins_left*60);
+    if(TMR_elapsed < 10)              // display the setpoint for x secs
+      Send_data_SPI(31, int(sp_mins), 0);
+    else      
+      if(sp_secs - TMR_elapsed > 0)   // set point not reached
+      {
+        TMR_mins_left = ((sp_secs) - TMR_elapsed) / 60;    
+        TMR_secs_left = ((sp_secs) - TMR_elapsed) - (TMR_mins_left*60);
+        
+        Serial.print(TMR_elapsed);
+        Serial.print("    -  ");
+        Serial.print(TMR_mins_left);
+        Serial.print(":");
+        Serial.println(TMR_secs_left);
 
-    Serial.print(TMR_mins_left);
-    Serial.print(":");
-    Serial.println(TMR_secs_left);
+        Send_data_SPI(31, TMR_mins_left, TMR_secs_left);
+      }
+      else
+      {
+        // set point exceeded
 
-    Send_data_SPI(32, TMR_mins_left, TMR_secs_left);
+        // send MQTT msg
+        // blink the time
+        
+        TMR_mins_left = (TMR_elapsed - sp_secs) / 60;    
+        TMR_secs_left = (TMR_elapsed - sp_secs) - (TMR_mins_left*60);      
+        Send_data_SPI(32, TMR_mins_left, TMR_secs_left);
 
+        if(Motion_State)
+          {
+            sp_mins = 0;
+            Send_data_SPI(5, 0, 0);
+          }
+          
+      }
   }
 }

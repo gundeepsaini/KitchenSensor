@@ -7,18 +7,22 @@ void Always_loop()
 
 
 void Fast_Loop()
-{   
+{ 
+  button.read();
   server.handleClient();  
+  button.read();
   MQTT_loop();  
   button.read();
   Check_MotionState();
+  button.read();
+  Handle_Timer();
 }
 
 
 
 void Mid1_Loop()
 {  
-  Handle_Timer();
+  //Handle_Timer();
 }
 
 
@@ -36,7 +40,7 @@ void Slow_Loop()
   if(MQTT_PIR_last_ON_msg_state == false)
   {
   	int a = 0000;
-    Send_data_SPI(1, a);			// off
+    //Send_data_SPI(1, a);			// off
   }
 }
 
