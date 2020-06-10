@@ -33,6 +33,7 @@ void Check_MotionState()
 
 void Handle_ButtonPress()
 {
+   Serial.println("button pressed");
    sp_mins = 5;
    TMR_start_time = millis()/1000; 
 }
@@ -49,6 +50,11 @@ void Handle_Timer()
     TMR_mins_left = ((sp_mins*60) - TMR_elapsed) % 60;
     TMR_secs_left = TMR_elapsed - (TMR_mins_left*60);
 
+    Serial.print(TMR_mins_left);
+    Serial.print(":");
+    Serial.println(TMR_secs_left);
+
     Send_data_SPI(32, TMR_mins_left, TMR_secs_left);
+
   }
 }
