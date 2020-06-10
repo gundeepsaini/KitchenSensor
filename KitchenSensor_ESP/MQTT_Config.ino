@@ -21,9 +21,7 @@ const char* mqtt_password   = SECRET_MQTT_Pass;
 #define MQTT_CONFIG_PIR        "homeassistant/sensor/PIR/Kitchen/config"
 #define MQTT_TOPIC_STATE_PIR   "homeassistant/sensor/PIR/Kitchen/state"
 
-unsigned long MQTT_PIR_heartbeat_timestamp;
-unsigned long MQTT_PIR_last_ON_msg_timestamp;
-bool MQTT_PIR_last_ON_msg_state;
+
 
 
 /**************** External Functions ************************************/
@@ -40,7 +38,7 @@ void MQTT_loop()
 	if (!client.connected())
     	MQTT_reconnect();              
   
-  	client.loop();
+  client.loop();
 }
 
 
@@ -81,14 +79,14 @@ void MQTT_publish_PIR(bool PIR_State)
 {   
   if(millis()/1000 - MQTT_PIR_last_ON_msg_timestamp > 30)  // Atleast 30 sec have passsed since last positive "ON" transmission
   {
-    MQTT_PIR_last_ON_msg_state = PIR_State;
-    MQTT_PIR_last_ON_msg_timestamp = millis()/1000;
-    MQTT_PIR_heartbeat_timestamp = MQTT_PIR_last_ON_msg_timestamp;  
-
     if(PIR_State)
       client.publish(MQTT_TOPIC_STATE_PIR, "ON", true);
     else
       client.publish(MQTT_TOPIC_STATE_PIR, "OFF", true);
+
+    MQTT_PIR_last_ON_msg_state = PIR_State;
+    MQTT_PIR_last_ON_msg_timestamp = millis()/1000;
+    MQTT_PIR_heartbeat_timestamp = MQTT_PIR_last_ON_msg_timestamp;  
   }
   //Serial.println(data);
 }
@@ -101,5 +99,6 @@ void MQTT_PIR_heartbeat()
   {
     MQTT_PIR_heartbeat_timestamp = millis()/1000;
     client.publish(MQTT_TOPIC_STATE_PIR, "OFF", true);
+    MQTT_PIR_last_ON_msg_state = false;
   }
 }

@@ -3,33 +3,52 @@
 
 void Hardware_Config()
 {
-  pinMode(Button_Pin, INPUT);
+  //pinMode(Button_Pin, INPUT);
   pinMode(PIR_Pin, INPUT);
+  
+  int presses = 5;        // Number of presses
+  int timeout = 2000;     // Timeout
+  int duration = 2000;    // Duration
+
+  button.begin();  
+  button.onPressed(Handle_ButtonPress);
+  //button.onSequence(presses, timeout, onSequenceMatched);
 }
 
-
-
-void Check_ButtonState()
-{
-  if(digitalRead(Button_Pin))
-  {
-    //Serial.println("ButtonPress!");
-  }
-}
 
 
 void Check_MotionState()
 {
-  if(digitalRead(PIR_Pin))
+  Motion_State = digitalRead(PIR_Pin);
+
+  if(Motion_State)
     {
-      Motion_State = true;
       MQTT_publish_PIR(Motion_State);
       int a = 11111;
-      Send_data_SPI(11, a);
+      Send_data_SPI(11, a);       // send msg "On"
     }
-  else
-    {
-      Motion_State = false;
-      Send_data_SPI(1, 0);
-    }
+}
+
+
+
+void Handle_ButtonPress()
+{
+   sp_mins = 5;
+   TMR_start_time = millis()/1000; 
+}
+
+
+
+void Handle_Timer()
+{
+  if(sp_mins > 0)
+  { 
+    long TMR_elapsed = millis()/1000 - TMR_start_time;
+    //long TMR_left    = (sp_mins*60) - TMR_elapsed;
+
+    TMR_mins_left = ((sp_mins*60) - TMR_elapsed) % 60;
+    TMR_secs_left = TMR_elapsed - (TMR_mins_left*60);
+
+    Send_data_SPI(32, TMR_mins_left, TMR_secs_left);
+  }
 }

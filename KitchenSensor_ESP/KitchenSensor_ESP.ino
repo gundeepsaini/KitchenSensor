@@ -35,6 +35,7 @@ Changes:
 #include <ArduinoOTA.h>
 #include <ESP8266WebServer.h>
 #include<SPI.h>
+#include <EasyButton.h>
 
 // remove the unnecessary libs
 #include <ESP8266WiFi.h>
@@ -45,7 +46,7 @@ Changes:
 
 /* ------------- CONFIG VAR ------------------------------ */
 unsigned long looptime_Fast = 0;    // in secs
-unsigned long looptime_Mid1 = 2;    // in secs
+unsigned long looptime_Mid1 = 1;    // in secs
 unsigned long looptime_Mid2 = 10;   // in secs
 unsigned long looptime_Slow       = 1 * (60);      // in mins
 unsigned long looptime_VerySlow   = 5 * (60);      // in mins
@@ -63,11 +64,17 @@ unsigned long lastrun_fast, lastrun_Mid1;
 unsigned long lastrun_Mid2, lastrun_slow, lastrun_Veryslow;
 unsigned long lastrun_30mins,lastrun_OTA;
 bool OTA_Mode=0;
-bool Motion_State = 0;
 String webpage1="";
-
+bool Motion_State = 0, Button_State = 0;
+int sp_mins;
+byte TMR_mins_left, TMR_secs_left;
+unsigned long TMR_start_time;
+unsigned long MQTT_PIR_heartbeat_timestamp;
+unsigned long MQTT_PIR_last_ON_msg_timestamp;
+bool MQTT_PIR_last_ON_msg_state;
 
 ESP8266WebServer server(80);
+EasyButton button(Button_Pin);
 
 
 void setup() 
@@ -139,12 +146,16 @@ void loop()
     Slow_Loop();
   }
 
+/*
+
     // Very Slow Loop
  if(!OTA_Mode && ((millis()/1000 - lastrun_Veryslow > looptime_VerySlow) || lastrun_Veryslow ==0))
   {
     lastrun_Veryslow = millis()/1000;
     VerySlow_Loop();
   }
+
+*/
 }
 
 
