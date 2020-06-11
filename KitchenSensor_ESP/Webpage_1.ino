@@ -20,10 +20,14 @@ void Prep_webpage1()
   String body_table_row00 ="<tr><th>#</th><th>Description</th><th>Value</th><th>Unit</th></tr>";
   String body_end = "</table></body></html>";
 
+  String sign = "";
+  if(TMR_complete)
+     sign = "-";
+
   // Start chaning here onwards.....
   String body_table_row01 =String("<tr><td>01</td><td>Motion State</td><td>")     + String(MQTT_PIR_last_ON_msg_state)  + String("</td><td>-</td></tr>");
   String body_table_row02 =String("<tr><td>03</td><td>Timer: Setpoint</td><td>")  + String(sp_mins)             + String("</td><td>mins</td></tr>");
-  String body_table_row03 =String("<tr><td>02</td><td>Timer: Time left</td><td>") + String(TMR_mins_left) + ":" +  String(TMR_secs_left)  + String("</td><td>mm:ss</td></tr>");  
+  String body_table_row03 =String("<tr><td>02</td><td>Timer: Time left</td><td>") + String(sign) + String(TMR_mins_left) + ":" +  String(TMR_secs_left)  + String("</td><td>mm:ss</td></tr>");  
   //String body_table_row04 =String("<tr><td>04</td><td>City Humidity</td><td>")           + String(City_Humidity)      + String("</td><td>%</td></tr>");
   //String body_table_row05 =String("<tr><td>05</td><td>DHT11 Temperature</td><td>")       + String(DHT_temperature)    + String("</td><td>&#8451;</td></tr>");
   

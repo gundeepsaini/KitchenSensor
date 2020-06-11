@@ -74,6 +74,7 @@ unsigned long MQTT_PIR_last_ON_msg_timestamp, MQTT_TMR_last_msg_timestamp;
 bool MQTT_PIR_last_ON_msg_state;
 unsigned long buttonPress_timestamp=0;
 unsigned long blink_tmr = 0;
+bool TMR_complete = 0;
 
 ESP8266WebServer server(80);
 EasyButton button(Button_Pin);

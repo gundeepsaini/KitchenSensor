@@ -93,6 +93,7 @@ void Handle_Timer()
       {
         if(sp_secs - TMR_elapsed > 0)   // set point not reached
         {
+          TMR_complete = 0;
           TMR_mins_left = ((sp_secs) - TMR_elapsed) / 60;    
           TMR_secs_left = ((sp_secs) - TMR_elapsed) - (TMR_mins_left*60);
 
@@ -101,9 +102,7 @@ void Handle_Timer()
         else
         {
           // set point exceeded
-
-          // send MQTT msg
-          
+          TMR_complete = 1;
           TMR_mins_left = (TMR_elapsed - sp_secs) / 60;    
           TMR_secs_left = (TMR_elapsed - sp_secs) - (TMR_mins_left*60);      
           
@@ -123,6 +122,7 @@ void Handle_Timer()
               Send_data_SPI(5, 0, 0);
             }
           else
+            // send MQTT msg
             MQTT_publish_TMR_elapsed();            
         }
       }
