@@ -46,7 +46,9 @@ void Handle_ButtonPress()
       sp_mins = 0;
       TMR_mins_left = 0;
       TMR_secs_left = 0;
+      TMR_complete = 0;
       Send_data_SPI(5, 0, 0);
+      MQTT_publish_TMR_elapsed(false); 
       delay(1000);
     }
   else
@@ -119,11 +121,13 @@ void Handle_Timer()
               sp_mins = 0;
               TMR_mins_left = 0;
               TMR_secs_left = 0;
+              TMR_complete = 0;
               Send_data_SPI(5, 0, 0);
+              MQTT_publish_TMR_elapsed(false);  
             }
           else
             // send MQTT msg
-            MQTT_publish_TMR_elapsed();            
+            MQTT_publish_TMR_elapsed(true);            
         }
       }
   }

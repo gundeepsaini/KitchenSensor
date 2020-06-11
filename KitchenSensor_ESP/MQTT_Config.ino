@@ -115,11 +115,18 @@ void MQTT_PIR_heartbeat()
 
 
 // Send msg
-void MQTT_publish_TMR_elapsed()
+void MQTT_publish_TMR_elapsed(bool state)
 {   
   if(millis()/1000 - MQTT_TMR_last_msg_timestamp > 15)  // Atleast 15 sec have passsed since last transmission
   {
-    client.publish(MQTT_TOPIC_STATE_TMR, "ON", true);
-    MQTT_TMR_last_msg_timestamp = millis()/1000;
+    if(state)
+      {
+        client.publish(MQTT_TOPIC_STATE_TMR, "ON", true);
+        MQTT_TMR_last_msg_timestamp = millis()/1000;
+      }
+    else
+      client.publish(MQTT_TOPIC_STATE_TMR, "OFF", true);
+    
+
   }
 }
