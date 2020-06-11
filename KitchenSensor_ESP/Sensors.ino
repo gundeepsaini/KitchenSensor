@@ -44,6 +44,8 @@ void Handle_ButtonPress()
     {
       // time after which tmr change is not allowed. It is switched off.
       sp_mins = 0;
+      TMR_mins_left = 0;
+      TMR_secs_left = 0;
       Send_data_SPI(5, 0, 0);
       delay(1000);
     }
@@ -116,6 +118,8 @@ void Handle_Timer()
           if(Motion_State)
             {
               sp_mins = 0;
+              TMR_mins_left = 0;
+              TMR_secs_left = 0;
               Send_data_SPI(5, 0, 0);
             }
           else

@@ -21,9 +21,9 @@ void Prep_webpage1()
   String body_end = "</table></body></html>";
 
   // Start chaning here onwards.....
-  String body_table_row01 =String("<tr><td>01</td><td>Motion State</td><td>")     + String(Motion_State)       + String("</td><td>-</td></tr>");
-  //String body_table_row02 =String("<tr><td>02</td><td>Bedroom Humidity</td><td>")        + String(Humidity)   + String("</td><td>%</td></tr>");
-  //String body_table_row03 =String("<tr><td>03</td><td>City Temperature</td><td>")        + String(City_Temperature)   + String("</td><td>&#8451;</td></tr>");
+  String body_table_row01 =String("<tr><td>01</td><td>Motion State</td><td>")     + String(MQTT_PIR_last_ON_msg_state)  + String("</td><td>-</td></tr>");
+  String body_table_row02 =String("<tr><td>03</td><td>Timer: Setpoint</td><td>")  + String(sp_mins)             + String("</td><td>mins</td></tr>");
+  String body_table_row03 =String("<tr><td>02</td><td>Timer: Time left</td><td>") + String(TMR_mins_left) + ":" +  String(TMR_secs_left)  + String("</td><td>mm:ss</td></tr>");  
   //String body_table_row04 =String("<tr><td>04</td><td>City Humidity</td><td>")           + String(City_Humidity)      + String("</td><td>%</td></tr>");
   //String body_table_row05 =String("<tr><td>05</td><td>DHT11 Temperature</td><td>")       + String(DHT_temperature)    + String("</td><td>&#8451;</td></tr>");
   
@@ -34,8 +34,8 @@ void Prep_webpage1()
   			 body_table_start +
   			 body_table_row00 +
   			 body_table_row01 +
-  			 //body_table_row02 +
-         //body_table_row03 +
+  			 body_table_row02 +
+         body_table_row03 +
          //body_table_row04 +
          //body_table_row05 +
   			 body_end; 
