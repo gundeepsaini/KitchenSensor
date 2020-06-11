@@ -24,8 +24,8 @@ void Check_MotionState()
   if(Motion_State)
     {
       MQTT_publish_PIR(Motion_State);
-      int a = 8888;
-      Send_data_SPI(11, a);       // send msg "On"
+      //int a = 8888;
+      //Send_data_SPI(11, a);       // send msg "On"
     }
 }
 
@@ -35,15 +35,17 @@ void Handle_ButtonPress()
 { 
   if(sp_mins == 0)
     {
+      // First time button pressed
       buttonPress_timestamp = millis()/1000;
       TMR_start_time = buttonPress_timestamp;
     }
   
-  if(millis()/1000 - buttonPress_timestamp > 20 )   // time before which tmr change is allowed
+  if(millis()/1000 - buttonPress_timestamp > 20 )   
     {
+      // time after which tmr change is not allowed. It is switched off.
       sp_mins = 0;
       Send_data_SPI(5, 0, 0);
-      delay(2000);
+      delay(1000);
     }
   else
   {
@@ -65,7 +67,8 @@ void Handle_ButtonPress()
           sp_mins = 30;
           break;
     }
-    Send_data_SPI(31, int(sp_mins), 0);  
+    Send_data_SPI(31, int(sp_mins), 0);
+    delay(1000);  
   }
   
   //Serial.println(sp_mins);
@@ -90,12 +93,6 @@ void Handle_Timer()
         {
           TMR_mins_left = ((sp_secs) - TMR_elapsed) / 60;    
           TMR_secs_left = ((sp_secs) - TMR_elapsed) - (TMR_mins_left*60);
-          
-          //Serial.print(TMR_elapsed);
-          //Serial.print("    -  ");
-          //Serial.print(TMR_mins_left);
-          //Serial.print(":");
-          //Serial.println(TMR_secs_left);
 
           Send_data_SPI(31, TMR_mins_left, TMR_secs_left);
         }
@@ -104,16 +101,9 @@ void Handle_Timer()
           // set point exceeded
 
           // send MQTT msg
-          // blink the time
           
           TMR_mins_left = (TMR_elapsed - sp_secs) / 60;    
           TMR_secs_left = (TMR_elapsed - sp_secs) - (TMR_mins_left*60);      
-
-          //Serial.print(TMR_elapsed);
-          //Serial.print("    -  ");
-          //Serial.print(TMR_mins_left);
-          //Serial.print(":");
-          //Serial.println(TMR_secs_left);
           
           if(millis() - blink_tmr > 1000)
             {
@@ -127,7 +117,9 @@ void Handle_Timer()
             {
               sp_mins = 0;
               Send_data_SPI(5, 0, 0);
-            }            
+            }
+          else
+            MQTT_publish_TMR_elapsed();            
         }
       }
   }

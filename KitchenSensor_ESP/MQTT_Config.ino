@@ -21,6 +21,9 @@ const char* mqtt_password   = SECRET_MQTT_Pass;
 #define MQTT_CONFIG_PIR        "homeassistant/sensor/PIR/Kitchen/config"
 #define MQTT_TOPIC_STATE_PIR   "homeassistant/sensor/PIR/Kitchen/state"
 
+// Kitchen Timer
+#define MQTT_CONFIG_TMR        "homeassistant/sensor/TMR/Kitchen/config"
+#define MQTT_TOPIC_STATE_TMR   "homeassistant/sensor/TMR/Kitchen/state"
 
 
 
@@ -87,6 +90,9 @@ void MQTT_publish_PIR(bool PIR_State)
     MQTT_PIR_last_ON_msg_state = PIR_State;
     MQTT_PIR_last_ON_msg_timestamp = millis()/1000;
     MQTT_PIR_heartbeat_timestamp = MQTT_PIR_last_ON_msg_timestamp;  
+
+    int a = 8888;
+    Send_data_SPI(11, a);       // send msg "On"
   }
   //Serial.println(data);
 }
@@ -100,5 +106,20 @@ void MQTT_PIR_heartbeat()
     MQTT_PIR_heartbeat_timestamp = millis()/1000;
     client.publish(MQTT_TOPIC_STATE_PIR, "OFF", true);
     MQTT_PIR_last_ON_msg_state = false;
+  }
+}
+
+
+
+//-------------------- TIMER MQTT -----------------------------
+
+
+// Send msg
+void MQTT_publish_TMR_elapsed()
+{   
+  if(millis()/1000 - MQTT_TMR_last_msg_timestamp > 15)  // Atleast 15 sec have passsed since last transmission
+  {
+    client.publish(MQTT_TOPIC_STATE_TMR, "ON", true);
+    MQTT_TMR_last_msg_timestamp = millis()/1000;
   }
 }
