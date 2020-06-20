@@ -3,15 +3,15 @@
 
 void Hardware_Config()
 {
-  //pinMode(Button_Pin, INPUT);
+  pinMode(Button_Pin, INPUT);
   pinMode(PIR_Pin, INPUT);
   
   int presses = 5;        // Number of presses
   int timeout = 2000;     // Timeout
   int duration = 2000;    // Duration
 
-  button.begin();  
-  button.onPressed(Handle_ButtonPress);
+  //button.begin();  
+  //button.onPressed(Handle_ButtonPress);
   //button.onSequence(presses, timeout, onSequenceMatched);
 }
 
@@ -30,13 +30,13 @@ void Check_MotionState()
       if(TMR_Status == 2)
       {
         TMR_Status = 3;
-        time_since_tmr_ack = time_since_last_buttonpress/1000;
+        time_since_tmr_ack = millis()/1000;
       }
     }
 }
 
 
-unsigned long time_since_last_buttonpress=0, time_since_tmr_ack=0;
+
 
 void Handle_ButtonPress()
 { 
@@ -53,7 +53,7 @@ void Handle_ButtonPress()
         case 0:
             TMR_Status = 1;
             sp_mins = 5;
-            TMR_start_time = time_since_last_buttonpress/1000;
+            TMR_start_time = time_since_last_buttonpress/1000;            
             break;
 
         case 1:
@@ -87,6 +87,8 @@ void Handle_ButtonPress()
             time_since_tmr_ack = time_since_last_buttonpress/1000;
             break;             
       }
+
+      Send_data_SPI(31,sp_mins,0);
     }
   }
 }

@@ -32,7 +32,7 @@ const char* mqtt_password   = SECRET_MQTT_Pass;
 void MQTT_Config()
 {
 	client.setServer(mqtt_server, SECRET_MQTT_Port);
- 	client.setCallback(MQTT_MessageRecd_callback);
+ 	client.setCallback(MQTT_MessageRecd_callback);  
 }
 
 
@@ -91,8 +91,8 @@ void MQTT_publish_PIR(bool PIR_State)
     MQTT_PIR_last_ON_msg_timestamp = millis()/1000;
     MQTT_PIR_heartbeat_timestamp = MQTT_PIR_last_ON_msg_timestamp;  
 
-    int a = 1;
-    Send_data_SPI(11, a);       // send msg "On"
+    if(TMR_Status == 0)
+      Send_data_SPI(11, 1);       // send msg "On"
   }
   //Serial.println(data);
 }
