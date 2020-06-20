@@ -75,7 +75,7 @@ bool MQTT_PIR_last_ON_msg_state;
 unsigned long buttonPress_timestamp=0;
 unsigned long blink_tmr = 0;
 bool TMR_complete = 0;
-int TMR_state=0, TMR_secs_left=0;
+int TMR_Status=0, TMR_secs_left=0;
 unsigned long time_since_last_buttonpress=0, time_since_tmr_ack=0;
 
 ESP8266WebServer server(80);

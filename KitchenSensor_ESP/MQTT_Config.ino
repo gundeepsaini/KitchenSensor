@@ -113,12 +113,15 @@ void MQTT_PIR_heartbeat()
 
 //-------------------- TIMER MQTT -----------------------------
 
+int TMR_state_MQTT_old;
 
 // Send msg
 void MQTT_publish_TMR_elapsed(int TMR_state_MQTT, int TMR_secs_left_MQTT)
 {   
-  if(millis()/1000 - MQTT_TMR_last_msg_timestamp > 15)  // Atleast 15 sec have passsed since last transmission
-  {
+  if(millis()/1000 - MQTT_TMR_last_msg_timestamp > 15 || (TMR_state_MQTT != TMR_state_MQTT_old))  // Atleast 15 sec have passsed since last transmission
+  { 
+      TMR_state_MQTT_old = TMR_state_MQTT;
+      
     // Use arduinojson.org/v6/assistant to compute the capacity.
       const size_t capacity = JSON_OBJECT_SIZE(10);
       DynamicJsonDocument doc(capacity);

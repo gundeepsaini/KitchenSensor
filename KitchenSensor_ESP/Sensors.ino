@@ -79,6 +79,7 @@ void Handle_ButtonPress()
               TMR_Status = 0;
               sp_mins = 0;
               TMR_start_time = 0;
+              time_since_last_buttonpress = time_since_last_buttonpress + 2000; // Additional delay to prevent retrigger
             }
             break;
         
