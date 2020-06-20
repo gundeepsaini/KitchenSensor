@@ -91,7 +91,7 @@ void MQTT_publish_PIR(bool PIR_State)
     MQTT_PIR_last_ON_msg_timestamp = millis()/1000;
     MQTT_PIR_heartbeat_timestamp = MQTT_PIR_last_ON_msg_timestamp;  
 
-    int a = 8888;
+    int a = 1;
     Send_data_SPI(11, a);       // send msg "On"
   }
   //Serial.println(data);
@@ -115,18 +115,23 @@ void MQTT_PIR_heartbeat()
 
 
 // Send msg
-void MQTT_publish_TMR_elapsed(bool state)
+void MQTT_publish_TMR_elapsed(int TMR_state_MQTT, int TMR_secs_left_MQTT)
 {   
   if(millis()/1000 - MQTT_TMR_last_msg_timestamp > 15)  // Atleast 15 sec have passsed since last transmission
   {
-    if(state)
-      {
-        client.publish(MQTT_TOPIC_STATE_TMR, "ON", true);
-        MQTT_TMR_last_msg_timestamp = millis()/1000;
-      }
-    else
-      client.publish(MQTT_TOPIC_STATE_TMR, "OFF", true);
-    
+    // Use arduinojson.org/v6/assistant to compute the capacity.
+      const size_t capacity = JSON_OBJECT_SIZE(10);
+      DynamicJsonDocument doc(capacity);
 
+      doc["Status"]       = String(TMR_state_MQTT);
+      doc["TimeLeft"]     = String(TMR_secs_left_MQTT);
+      
+      char data[256];
+      serializeJson(doc, data, sizeof(data));
+      client.publish(MQTT_TOPIC_STATE_TMR, data, true);
+      Serial.println(data);
+
+      MQTT_TMR_last_msg_timestamp = millis()/1000;
   }
 }
+

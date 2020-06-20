@@ -26,66 +26,138 @@ void Check_MotionState()
       MQTT_publish_PIR(Motion_State);
       //int a = 8888;
       //Send_data_SPI(11, a);       // send msg "On"
+
+      if(TMR_Status == 2)
+      {
+        TMR_Status = 3;
+        time_since_tmr_ack = time_since_last_buttonpress/1000;
+      }
     }
 }
 
 
+unsigned long time_since_last_buttonpress=0, time_since_tmr_ack=0;
 
 void Handle_ButtonPress()
 { 
-  if(sp_mins == 0)
-    {
-      // First time button pressed
-      buttonPress_timestamp = millis()/1000;
-      TMR_start_time = buttonPress_timestamp;
-    }
-  
-  if(millis()/1000 - buttonPress_timestamp > 20 )   
-    {
-      // time after which tmr change is not allowed. It is switched off.
-      sp_mins = 0;
-      TMR_mins_left = 0;
-      TMR_secs_left = 0;
-      TMR_complete = 0;
-      Send_data_SPI(5, 0, 0);
-      MQTT_publish_TMR_elapsed(false); 
-      delay(1000);
-    }
-  else
+  bool ButtonState = digitalRead(Button_Pin);
+
+  if(ButtonState)
   {
-    switch(sp_mins)
+    if(millis() - time_since_last_buttonpress > 500)     // Min time after a button press for debounc handling
     {
-      case 0:
-          sp_mins = 5;
-          break;
+      time_since_last_buttonpress = millis();
 
-      case 5:
-          sp_mins = 10;
-          break;
+      switch(TMR_Status)
+      {
+        case 0:
+            TMR_Status = 1;
+            sp_mins = 5;
+            TMR_start_time = time_since_last_buttonpress/1000;
+            break;
 
-      case 10:
-          sp_mins = 20;
-          break;
+        case 1:
+            if(time_since_last_buttonpress/1000 - TMR_start_time < 15)    // Min time to change set point
+            {
+              switch(sp_mins)
+                {
+                  case 5:
+                      sp_mins = 10;
+                      break;
 
-      case 20:
-          sp_mins = 30;
-          break;
+                  case 10:
+                      sp_mins = 20;
+                      break;
+
+                  case 20:
+                      sp_mins = 30;
+                      break;
+                }
+            }
+            else
+            {
+              TMR_Status = 0;
+              sp_mins = 0;
+              TMR_start_time = 0;
+            }
+            break;
+        
+        case 2:
+            TMR_Status = 3;
+            time_since_tmr_ack = time_since_last_buttonpress/1000;
+            break;             
+      }
     }
-    Send_data_SPI(31, int(sp_mins), 0);
-    delay(1000);  
   }
-  
-  //Serial.println(sp_mins);
 }
+
+
+/*
+
+TMR_Status:
+0 - OFF
+1 - Running  (down counting)
+2 - Complete (up   counting)
+3 - Acknowledged (stopped)
+
+*/
 
 
 
 void Handle_Timer()
 {
+  if(TMR_Status > 0)
+  { 
+    long TMR_time_elapsed = millis()/1000 - TMR_start_time;
+    int sp_secs = sp_mins * 60;
+
+    switch(TMR_Status)
+    {
+      case 1: // Timer running (down counting)
+          
+          if(TMR_time_elapsed >= sp_secs)
+            {
+              TMR_Status = 2;
+              break;
+            }
+          else
+          {
+            TMR_secs_left = sp_secs - TMR_time_elapsed;
+            TMR_mins_left_display = ((sp_secs) - TMR_time_elapsed) / 60;    
+            TMR_secs_left_display = ((sp_secs) - TMR_time_elapsed) - (TMR_mins_left_display*60);
+            Send_data_SPI(31, TMR_mins_left_display, TMR_secs_left_display);
+          }
+          break;
+
+      case 2: // Timer complete (up   counting)
+            TMR_secs_left = TMR_time_elapsed - sp_secs;
+            TMR_mins_left_display = (TMR_time_elapsed - sp_secs) / 60;    
+            TMR_secs_left_display = (TMR_time_elapsed - sp_secs) - (TMR_mins_left_display*60); 
+            Send_data_SPI(32, TMR_mins_left_display, TMR_secs_left_display);
+          break;
+
+      case 3: // Timer Acknowledged (stopped)
+          if(millis()/1000 - time_since_tmr_ack > 15)
+          {
+            TMR_Status = 0;
+            time_since_tmr_ack = 0;
+            TMR_secs_left = 0;
+            Send_data_SPI(5, 0, 0);      
+          }
+          break;          
+    }
+
+    MQTT_publish_TMR_elapsed(TMR_Status, TMR_secs_left);
+  }
+}
+
+
+/*
+
+
   if(sp_mins > 0)
   { 
-    long TMR_elapsed = millis()/1000 - TMR_start_time;
-    int sp_secs = sp_mins * 60;
+    
 
     if(TMR_elapsed < 10)              // display the setpoint for x secs
       {
@@ -131,4 +203,53 @@ void Handle_Timer()
         }
       }
   }
+
+
+
+void Handle_ButtonPress_old()
+{ 
+  if(sp_mins == 0)
+    {
+      // First time button pressed
+      buttonPress_timestamp = millis()/1000;
+      TMR_start_time = buttonPress_timestamp;
+    }
+  
+  if(millis()/1000 - buttonPress_timestamp > 20 )   
+    {
+      // time after which tmr change is not allowed. It is switched off.
+      sp_mins = 0;
+      TMR_mins_left = 0;
+      TMR_secs_left = 0;
+      TMR_complete = 0;
+      Send_data_SPI(5, 0, 0);
+      MQTT_publish_TMR_elapsed(false); 
+      delay(1000);
+    }
+  else
+  {
+    switch(sp_mins)
+    {
+      case 0:
+          sp_mins = 5;
+          break;
+
+      case 5:
+          sp_mins = 10;
+          break;
+
+      case 10:
+          sp_mins = 20;
+          break;
+
+      case 20:
+          sp_mins = 30;
+          break;
+    }
+    Send_data_SPI(31, int(sp_mins), 0);
+    delay(1000);  
+  }
+  
+  //Serial.println(sp_mins);
 }
+*/

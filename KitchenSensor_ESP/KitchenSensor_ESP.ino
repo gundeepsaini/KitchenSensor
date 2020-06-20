@@ -34,7 +34,7 @@ Changes:
 #include "Secrets.h"
 #include <ArduinoOTA.h>
 #include <ESP8266WebServer.h>
-#include<SPI.h>
+#include <SPI.h>
 #include <EasyButton.h>
 
 // remove the unnecessary libs
@@ -67,7 +67,7 @@ bool OTA_Mode=0;
 String webpage1="";
 bool Motion_State = 0, Button_State = 0;
 int sp_mins;
-byte TMR_mins_left, TMR_secs_left;
+byte TMR_mins_left_display, TMR_secs_left_display; 
 unsigned long TMR_start_time;
 unsigned long MQTT_PIR_heartbeat_timestamp;
 unsigned long MQTT_PIR_last_ON_msg_timestamp, MQTT_TMR_last_msg_timestamp;
@@ -75,6 +75,7 @@ bool MQTT_PIR_last_ON_msg_state;
 unsigned long buttonPress_timestamp=0;
 unsigned long blink_tmr = 0;
 bool TMR_complete = 0;
+int TMR_state=0, TMR_secs_left=0;
 
 ESP8266WebServer server(80);
 EasyButton button(Button_Pin);
