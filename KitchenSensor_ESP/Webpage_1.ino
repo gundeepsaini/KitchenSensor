@@ -21,23 +21,31 @@ void Prep_webpage1()
   String body_end = "</table></body></html>";
   
   int mins_left, secs_left;
-
-  if(TMR_Status > 0)
-  {   
-      //int total_secs_left = TMR_secs_left;
-      mins_left = 0;
-      secs_left = TMR_secs_left;
-  }
-  else
+  long TMR_time_elapsed = millis()/1000 - TMR_start_time;
+  int sp_secs = sp_mins * 60;
+  switch(TMR_Status)
   {
-      mins_left = 0;
-      secs_left = 0;
+    case 0: 
+        mins_left = 0;
+        secs_left = 0;
+        break;
+
+    case 1: 
+        mins_left = ((sp_secs) - TMR_time_elapsed) / 60;    
+        secs_left = ((sp_secs) - TMR_time_elapsed) - (TMR_mins_left_display*60);
+        break;
+
+    case 2:
+    case 3: 
+        mins_left = -1 * (TMR_time_elapsed - sp_secs) / 60; 
+        secs_left = (TMR_time_elapsed - sp_secs) - (TMR_mins_left_display*60);
+        break;
   }
 
   // Start chaning here onwards.....
   String body_table_row01 =String("<tr><td>01</td><td>Motion State</td><td>")     + String(MQTT_PIR_last_ON_msg_state)  + String("</td><td>-</td></tr>");
   String body_table_row02 =String("<tr><td>03</td><td>Timer: Setpoint</td><td>")  + String(sp_mins)             + String("</td><td>mins</td></tr>");
-  String body_table_row03 =String("<tr><td>02</td><td>Timer: Time left</td><td>") + String(sign) + String(mins_left) + ":" +  String(secs_left)  + String("</td><td>mm:ss</td></tr>");  
+  String body_table_row03 =String("<tr><td>02</td><td>Timer: Time left</td><td>") + String(mins_left) + ":" +  String(secs_left)  + String("</td><td>mm:ss</td></tr>");  
   //String body_table_row04 =String("<tr><td>04</td><td>City Humidity</td><td>")           + String(City_Humidity)      + String("</td><td>%</td></tr>");
   //String body_table_row05 =String("<tr><td>05</td><td>DHT11 Temperature</td><td>")       + String(DHT_temperature)    + String("</td><td>&#8451;</td></tr>");
   
