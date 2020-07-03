@@ -72,16 +72,27 @@ void Handle_ButtonPress()
                   case 20:
                       sp_mins = 30;
                       break;
+
+                  case 30:
+                      sp_mins = 0;
+                      TMR_start_time = 0;
+                      time_since_last_buttonpress = time_since_last_buttonpress + 2000; // Additional delay to prevent retrigger
+                      TMR_Status = 0;
+                      TMR_secs_left = 0;
+                      Send_data_SPI(5,0,0); // OFF
+                      delay(1000);
+                      break;
                 }
             }
             else
             {
-              TMR_Status = 0;
               sp_mins = 0;
               TMR_start_time = 0;
               time_since_last_buttonpress = time_since_last_buttonpress + 2000; // Additional delay to prevent retrigger
               TMR_Status = 0;
               TMR_secs_left = 0;
+              Send_data_SPI(5,0,0); // OFF
+              delay(1000);
             }
             break;
         
