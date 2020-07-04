@@ -77,6 +77,7 @@ unsigned long blink_tmr = 0;
 bool TMR_complete = 0;
 int TMR_Status=0, TMR_secs_left=0;
 unsigned long time_since_last_buttonpress=0, time_since_tmr_ack=0;
+bool First_Bootup = 1;
 
 ESP8266WebServer server(80);
 EasyButton button(Button_Pin);

@@ -80,7 +80,7 @@ void Handle_ButtonPress()
                       TMR_Status = 0;
                       TMR_secs_left = 0;
                       Send_data_SPI(5,0,0); // OFF
-                      delay(1000);
+                      delay(2000);
                       break;
                 }
             }
@@ -92,7 +92,7 @@ void Handle_ButtonPress()
               TMR_Status = 0;
               TMR_secs_left = 0;
               Send_data_SPI(5,0,0); // OFF
-              delay(1000);
+              delay(2000);
             }
             break;
         
@@ -102,7 +102,8 @@ void Handle_ButtonPress()
             break;             
       }
 
-      Send_data_SPI(31,sp_mins,0);
+      if(sp_mins > 0)
+        Send_data_SPI(31,sp_mins,0);
     }
   }
 }

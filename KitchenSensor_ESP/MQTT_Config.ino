@@ -65,6 +65,12 @@ void MQTT_reconnect()
       }
       lastReconnectAttempt = millis()/1000;
   }
+
+  if(First_Bootup == 1)
+    {
+      First_Bootup = 0;
+      MQTT_publish_TMR_elapsed(0, 0);
+    }
 }
 
 
