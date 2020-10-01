@@ -93,8 +93,9 @@ void Handle_ButtonPress()
               TMR_Status = 0;
               TMR_secs_left = 0;
               Send_data_SPI(5,0,0); // OFF
+              delay(1000)
               MQTT_publish_TMR_elapsed(TMR_Status, TMR_secs_left);
-              delay(2000);
+              delay(1000);
             }
             break;
         
