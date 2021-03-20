@@ -21,15 +21,15 @@ const char* mqtt_user       = SECRET_MQTT_User;
 const char* mqtt_password   = SECRET_MQTT_Pass;
 
 // Motion Sensor
-#define MQTT_CONFIG_PIR        "homeassistant/sensor/PIR/Kitchen/config"
-#define MQTT_TOPIC_STATE_PIR   "homeassistant/sensor/PIR/Kitchen/state"
+#define MQTT_CONFIG_PIR        "HA/Kitchen/PIR/config" // old "homeassistant/sensor/PIR/Kitchen/config"
+#define MQTT_TOPIC_STATE_PIR   "HA/Kitchen/PIR/state"  // old "homeassistant/sensor/PIR/Kitchen/state"
 
 // Kitchen Timer
-#define MQTT_CONFIG_TMR        "homeassistant/sensor/TMR/Kitchen/config"
-#define MQTT_TOPIC_STATE_TMR   "homeassistant/sensor/TMR/Kitchen/state"
+#define MQTT_CONFIG_TMR        "HA/Kitchen/TMR/config" // old "homeassistant/sensor/TMR/Kitchen/config"
+#define MQTT_TOPIC_STATE_TMR   "HA/Kitchen/TMR/state"  // old "homeassistant/sensor/TMR/Kitchen/state"
 
 // Will Topic - Availability
-#define MQTT_TOPIC_WILL        "homeassistant/sensor/TMR/Kitchen/will"
+#define MQTT_TOPIC_WILL        "HA/Kitchen/status"     // old "homeassistant/sensor/TMR/Kitchen/status"
 #define MQTT_OFFLINE           "Offline"
 #define MQTT_ONLINE            "Active"
 
