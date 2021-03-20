@@ -23,8 +23,9 @@ To-Do:
   - 
 
 Changes:
-  - vXX | XX.XX.2020
-    Changes 
+  - 2021.03.20
+      - Added MQTT Will to show as offline when not connected
+    
 
 
 ------------------------------------------- */

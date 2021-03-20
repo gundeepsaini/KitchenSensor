@@ -1,5 +1,8 @@
 
 
+// https://pubsubclient.knolleary.net/api
+
+
 /******************** LIB **************************************/
 #define MQTT_MAX_PACKET_SIZE 1024  // < ----- Change in lib: This is because the defaul maxium length is 128b. So just go to PubSubClient.h and change #define MQTT_MAX_PACKET_SIZE 128 to #define MQTT_MAX_PACKET_SIZE 1024
 #include <PubSubClient.h>
@@ -25,7 +28,10 @@ const char* mqtt_password   = SECRET_MQTT_Pass;
 #define MQTT_CONFIG_TMR        "homeassistant/sensor/TMR/Kitchen/config"
 #define MQTT_TOPIC_STATE_TMR   "homeassistant/sensor/TMR/Kitchen/state"
 
-
+// Will Topic - Availability
+#define MQTT_TOPIC_WILL        "homeassistant/sensor/TMR/Kitchen/will"
+#define MQTT_OFFLINE           "Offline"
+#define MQTT_ONLINE            "Active"
 
 /**************** External Functions ************************************/
 
@@ -53,15 +59,19 @@ void MQTT_publish()
 
 /**************** Internal Functions ************************************/
 
+
 void MQTT_reconnect() 
 {
   if (millis()/1000 - lastReconnectAttempt > 30 || lastReconnectAttempt == 0) 
   {
       Serial.println("MQTT reconnecting");
-      if (client.connect(DeviceHostName, mqtt_user, mqtt_password)) 
+      
+      //boolean connect (clientID, [username, password], [willTopic, willQoS, willRetain, willMessage], [cleanSession])
+      if (client.connect(DeviceHostName, mqtt_user, mqtt_password, MQTT_TOPIC_WILL, 1, true, MQTT_OFFLINE)) 
       {
         //MQTT_publish_config();  
         Serial.println("MQTT connected");
+        client.publish(MQTT_TOPIC_WILL, MQTT_ONLINE, true);
       }
       lastReconnectAttempt = millis()/1000;
   }
