@@ -36,7 +36,6 @@ Changes:
 #include <ArduinoOTA.h>
 #include <ESP8266WebServer.h>
 #include <SPI.h>
-#include <EasyButton.h>
 
 // remove the unnecessary libs
 #include <ESP8266WiFi.h>
@@ -81,7 +80,7 @@ unsigned long time_since_last_buttonpress=0, time_since_tmr_ack=0;
 bool First_Bootup = 1;
 
 ESP8266WebServer server(80);
-EasyButton button(Button_Pin);
+
 
 
 void setup() 
@@ -114,6 +113,7 @@ void setup()
   WebServer_Config();
   MQTT_Config();
   Hardware_Config();
+  Hardware_Interupt_Config();
   
   digitalWrite(LED_BUILTIN, HIGH);
   Serial.println("Ready");

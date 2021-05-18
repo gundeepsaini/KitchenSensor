@@ -3,16 +3,30 @@
 
 void Hardware_Config()
 {
-  pinMode(Button_Pin, INPUT);
+  //pinMode(Button_Pin, INPUT);
   pinMode(PIR_Pin, INPUT);
-  
-  int presses = 5;        // Number of presses
-  int timeout = 2000;     // Timeout
-  int duration = 2000;    // Duration
+}
 
-  //button.begin();  
-  //button.onPressed(Handle_ButtonPress);
-  //button.onSequence(presses, timeout, onSequenceMatched);
+
+
+
+void Hardware_Interupt_Config()
+{
+  attachInterrupt(digitalPinToInterrupt(Button_Pin), Handle_ButtonPress_Interupt, RISING ); 
+}
+
+
+
+ICACHE_RAM_ATTR void Handle_ButtonPress_Interupt()
+{
+  Button_Pressed = 1;
+}
+
+
+void Handle_ButtonPress_Actions()
+{
+  Button_Pressed = 0;
+  Handle_ButtonPress();
 }
 
 
@@ -40,9 +54,9 @@ void Check_MotionState()
 
 void Handle_ButtonPress()
 { 
-  bool ButtonState = digitalRead(Button_Pin);
+  //bool ButtonState = digitalRead(Button_Pin);
 
-  if(ButtonState)
+  if(1)
   {
     if(millis() - time_since_last_buttonpress > 500)     // Min time after a button press for debounc handling
     {

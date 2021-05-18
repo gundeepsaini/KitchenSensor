@@ -8,16 +8,21 @@ void Always_loop()
 
 void Fast_Loop()
 { 
-  Handle_ButtonPress();
+  if(Button_Pressed)
+    Handle_ButtonPress_Actions();
+
+
+
+  //Handle_ButtonPress();
   server.handleClient();  
   
-  Handle_ButtonPress();
+  //Handle_ButtonPress();
   MQTT_loop();  
   
-  Handle_ButtonPress();
+  //Handle_ButtonPress();
   Check_MotionState();
   
-  Handle_ButtonPress();
+  //Handle_ButtonPress();
   Handle_Timer();
 }
 
