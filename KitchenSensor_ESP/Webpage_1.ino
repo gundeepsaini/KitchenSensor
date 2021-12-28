@@ -9,9 +9,8 @@
 
 void Prep_webpage1()
 {
-  time_t now1;  
-  time(&now1);
-  String timeStr = String(ctime(&now1));
+  
+  String timeStr = timeClient.getFormattedTime();
 
     // !!! ELements that don't change !!!
   String page_head ="<!DOCTYPE html><html><head><style>td,th{ border: 1px solid #dddddd; text-align: left; padding: 8px;} tr:nth-child(even){background-color: #dddddd;}</style></head>";

@@ -5,7 +5,7 @@
 
 /******************** LIB **************************************/
 #define MQTT_MAX_PACKET_SIZE 1024  // < ----- Change in lib: This is because the defaul maxium length is 128b. So just go to PubSubClient.h and change #define MQTT_MAX_PACKET_SIZE 128 to #define MQTT_MAX_PACKET_SIZE 1024
-#include <PubSubClient.h>
+#include "src/pubsubclient/PubSubClient.h"
 #include <ArduinoJson.h>
 
 
@@ -21,17 +21,17 @@ const char* mqtt_user       = SECRET_MQTT_User;
 const char* mqtt_password   = SECRET_MQTT_Pass;
 
 // Motion Sensor
-#define MQTT_CONFIG_PIR        "HA/Kitchen/PIR/config" // old "homeassistant/sensor/PIR/Kitchen/config"
-#define MQTT_TOPIC_STATE_PIR   "HA/Kitchen/PIR/state"  // old "homeassistant/sensor/PIR/Kitchen/state"
+#define MQTT_CONFIG_PIR        "HA/KitchenTMR/PIR/config" 
+#define MQTT_TOPIC_STATE_PIR   "HA/KitchenTMR/PIR/state"  
 
 // Kitchen Timer
-#define MQTT_CONFIG_TMR        "HA/Kitchen/TMR/config" // old "homeassistant/sensor/TMR/Kitchen/config"
-#define MQTT_TOPIC_STATE_TMR   "HA/Kitchen/TMR/state"  // old "homeassistant/sensor/TMR/Kitchen/state"
+#define MQTT_CONFIG_TMR        "HA/KitchenTMR/TMR/config" 
+#define MQTT_TOPIC_STATE_TMR   "HA/KitchenTMR/TMR/state"  
 
 // Will Topic - Availability
-#define MQTT_TOPIC_WILL        "HA/Kitchen/status"     // old "homeassistant/sensor/TMR/Kitchen/status"
-#define MQTT_OFFLINE           "Offline"
-#define MQTT_ONLINE            "Active"
+#define MQTT_TOPIC_WILL       "HA/KitchenTMR/status"     
+#define MQTT_OFFLINE          "Offline"
+#define MQTT_ONLINE           "Active"
 
 /**************** External Functions ************************************/
 
@@ -68,7 +68,7 @@ void MQTT_reconnect()
       
       //boolean connect (clientID, [username, password], [willTopic, willQoS, willRetain, willMessage], [cleanSession])
       if (client.connect(DeviceHostName, mqtt_user, mqtt_password, MQTT_TOPIC_WILL, 1, true, MQTT_OFFLINE)) 
-      {
+      { 
         //MQTT_publish_config();  
         Serial.println("MQTT connected");
         client.publish(MQTT_TOPIC_WILL, MQTT_ONLINE, true);

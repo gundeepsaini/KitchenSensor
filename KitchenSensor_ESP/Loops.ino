@@ -11,18 +11,9 @@ void Fast_Loop()
   if(Button_Pressed)
     Handle_ButtonPress_Actions();
 
-
-
-  //Handle_ButtonPress();
   server.handleClient();  
-  
-  //Handle_ButtonPress();
   MQTT_loop();  
-  
-  //Handle_ButtonPress();
   Check_MotionState();
-  
-  //Handle_ButtonPress();
   Handle_Timer();
 }
 
@@ -55,6 +46,6 @@ void Mid2_Loop()
 
 void VerySlow_Loop()
 {
-  
+  Time_NTP_Update();
 }
 

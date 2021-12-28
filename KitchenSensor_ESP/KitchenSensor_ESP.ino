@@ -6,7 +6,7 @@ Date: June 2020 (v01)
 Device: ESP8266 NodeMcU (Master), Atmega8 (Slave)
 
 Description:
-  - Motion Sensor unit for triggering Kitchen lights
+  - Motion Sensor unit for handling kitchen cooking timers
   - Additionally connected to Atmega8 over SPI to display
     information on 5 x 7 segment display
   - Secondary use is as a digital kitchen timer unit with the button
@@ -18,30 +18,19 @@ Note:
       reset adapter, allow port in firewall
   - send "OTA" on blynk terminal to enter dedicated mode
     or navigate to "ip/OTA" for OTA through web portal
-  
-To-Do:
-  - 
-
-Changes:
-  - 2021.03.20
-      - Added MQTT Will to show as offline when not connected
-    
+      
 
 
 ------------------------------------------- */
 
 
 /* ------------- LIB ------------------------------ */
+
 #include "Secrets.h"
+
 #include <ArduinoOTA.h>
 #include <ESP8266WebServer.h>
 #include <SPI.h>
-
-// remove the unnecessary libs
-#include <ESP8266WiFi.h>
-#include <ESP8266mDNS.h>
-#include <WiFiClient.h>
-#include <WiFiUdp.h>
 
 
 /* ------------- CONFIG VAR ------------------------------ */
@@ -49,15 +38,15 @@ unsigned long looptime_Fast = 0;    // in secs
 unsigned long looptime_Mid1 = 1;    // in secs
 unsigned long looptime_Mid2 = 10;   // in secs
 unsigned long looptime_Slow       = 1 * (60);      // in mins
-unsigned long looptime_VerySlow   = 5 * (60);      // in mins
+unsigned long looptime_VerySlow   = 30 * (60);      // in mins
 
 #define Button_Pin  4
 #define PIR_Pin     5
 
 
 /* ------------- VAR ------------------------------ */
-const char* ssid             = SECRET_WIFI_SSID2;
-const char* pass             = SECRET_WIFI_PASS2;
+const char* ssid             = SECRET_WIFI_SSID3;
+const char* pass             = SECRET_WIFI_PASS3;
 const char* DeviceHostName   = SECRET_Device_Name6;
 const char* OTA_Password     = SECRET_Device_OTA_PASS; 
 unsigned long lastrun_fast, lastrun_Mid1;
@@ -78,6 +67,7 @@ bool TMR_complete = 0;
 int TMR_Status=0, TMR_secs_left=0;
 unsigned long time_since_last_buttonpress=0, time_since_tmr_ack=0;
 bool First_Bootup = 1;
+bool Button_Pressed = 0;
 
 ESP8266WebServer server(80);
 
@@ -108,7 +98,7 @@ void setup()
   Serial.println(WiFi.localIP());
   
   Comm_SPI_Config();
-  Time_NTP_Config();  
+  Config_Time();
   OTA_Config();
   WebServer_Config();
   MQTT_Config();
@@ -132,7 +122,7 @@ void loop()
     Fast_Loop();
   }
 
-/*
+
   // Mid1 Loop
  if(!OTA_Mode && ((millis()/1000 - lastrun_Mid1 > looptime_Mid1) || lastrun_Mid1 ==0))
   {
@@ -147,7 +137,7 @@ void loop()
     lastrun_Mid2 = millis()/1000;
     Mid2_Loop();
   }
-*/
+
   // Slow Loop
  if(!OTA_Mode && ((millis()/1000 - lastrun_slow > looptime_Slow) || lastrun_slow ==0))
   {
@@ -155,7 +145,7 @@ void loop()
     Slow_Loop();
   }
 
-/*
+
 
     // Very Slow Loop
  if(!OTA_Mode && ((millis()/1000 - lastrun_Veryslow > looptime_VerySlow) || lastrun_Veryslow ==0))
@@ -164,7 +154,7 @@ void loop()
     VerySlow_Loop();
   }
 
-*/
+
 }
 
 
