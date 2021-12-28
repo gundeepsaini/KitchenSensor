@@ -88,6 +88,14 @@ void Handle_ButtonPress()
                       break;
 
                   case 30:
+                      sp_mins = 60;                      
+                      break;
+
+                  case 60:
+                      sp_mins = 120;
+                      break;
+
+                  case 120:
                       sp_mins = 0;
                       TMR_start_time = 0;
                       time_since_last_buttonpress = time_since_last_buttonpress + 2000; // Additional delay to prevent retrigger
@@ -96,7 +104,7 @@ void Handle_ButtonPress()
                       Send_data_SPI(5,0,0); // OFF
                       MQTT_publish_TMR_elapsed(TMR_Status, TMR_secs_left);
                       delay(2000);
-                      break;
+                      break;    
                 }
             }
             else
