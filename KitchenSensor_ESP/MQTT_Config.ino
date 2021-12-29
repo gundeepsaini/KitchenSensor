@@ -54,6 +54,8 @@ void MQTT_loop()
 void MQTT_publish()
 {   
     MQTT_PIR_heartbeat();
+
+    MQTT_publish_TMR_elapsed(TMR_Status, TMR_secs_left);
 }
 
 
